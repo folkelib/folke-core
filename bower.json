@@ -1,0 +1,26 @@
+{
+  "name": "folke-core",
+  "homepage": "https://github.com/folkelib/folke-core",
+  "authors": [
+    "Sidoine De Wispelaere <sidoine@sidoine.net>"
+  ],
+  "description": "Folke Core framework for Single Page Applications",
+  "main": "folke-core.js",
+  "moduleType": [
+    "amd"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "hasher": "^1.2.0",
+    "crossroads": "^0.12.2",
+    "js-signals": "^1.0.0",
+    "knockout": "^3.4.0"
+  }
+}
