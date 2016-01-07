@@ -114,6 +114,6 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
         return Application;
     })();
     exports.Application = Application;
-    exports.__esModule = true;
-    exports["default"] = new Application();
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = new Application();
 });
