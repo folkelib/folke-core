@@ -46,11 +46,11 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
             }
             this.popin(null);
             var ret = this.showPage(viewId, params, true, true);
-            for (var i = 0; i < views.length; i++) {
-                var view = views[i];
+            for (var i_1 = 0; i_1 < views.length; i_1++) {
+                var view = views[i_1];
                 if (view.closing) {
-                    this.pages.splice(i, 1);
-                    i--;
+                    this.pages.splice(i_1, 1);
+                    i_1--;
                 }
             }
             return ret;
