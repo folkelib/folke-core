@@ -111,6 +111,15 @@ export class Application {
             });
         }
     }
+
+    /**
+     * Shows a confirm pop-in (with the 'popin-confirm' name)
+     * @param title The title
+     * @param message The message
+     */
+    public confirm(title: string, message: string) {
+        return this.showPopin<boolean>('popin-confirm', { title: title, message: message });
+    }
     
     /**
      * Hides the pop-in

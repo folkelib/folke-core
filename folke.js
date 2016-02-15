@@ -101,6 +101,14 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
             }
         };
         /**
+         * Shows a confirm pop-in (with the 'popin-confirm' name)
+         * @param title The title
+         * @param message The message
+         */
+        Application.prototype.confirm = function (title, message) {
+            return this.showPopin('popin-confirm', { title: title, message: message });
+        };
+        /**
          * Shows a component without hidding already displayed components
          * @param viewId The view id (see registerComponent)
          * @param params The parameters for the page
@@ -151,6 +159,6 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
         return Application;
     })();
     exports.Application = Application;
-    exports.__esModule = true;
-    exports["default"] = new Application();
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = new Application();
 });
