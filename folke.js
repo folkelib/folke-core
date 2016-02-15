@@ -12,10 +12,21 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
             this.popin = ko.observable(null);
             this.defaultRoute = null;
             this.defaultRoutePriority = 0;
+            /**
+             * Hides the pop-in
+             */
             this.hidePopin = function () {
                 _this.popin(null);
             };
         }
+        /**
+         * Adds a route handler
+         * @param route The route. May contain {example} for mandatory parameters, :example: for optional parameters.
+         *              * is a wildcard to for "everything until the end".
+         * @param onRoute A function that will be called when the route is called. May also be a component id, in which
+         *                case this.goToView will be called for this component.
+         * @param priority The priority, used to create a default route (higher number is more priority).
+         */
         Application.prototype.addRoute = function (route, onRoute, priority) {
             var _this = this;
             if (priority === void 0) { priority = 0; }
@@ -38,6 +49,11 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
                 }
             }
         };
+        /**
+         * Shows a component and hides all the components that are already displayed (including popins).
+         * @param viewId The component to show
+         * @param params The parameters for the component
+         */
         Application.prototype.goToView = function (viewId, params) {
             var views = this.pages();
             for (var _i = 0; _i < views.length; _i++) {
@@ -46,18 +62,29 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
             }
             this.popin(null);
             var ret = this.showPage(viewId, params, true, true);
-            for (var i_1 = 0; i_1 < views.length; i_1++) {
-                var view = views[i_1];
+            for (var i = 0; i < views.length; i++) {
+                var view = views[i];
                 if (view.closing) {
-                    this.pages.splice(i_1, 1);
-                    i_1--;
+                    this.pages.splice(i, 1);
+                    i--;
                 }
             }
             return ret;
         };
+        /**
+         * Registers a component with knockout that have a code and a template of the same name and in the same directory
+         * @param path The directory in which the component is
+         * @param id The id of the component. Must be the same as the names of the script and the HTML template files (minus the extension)
+         */
         Application.prototype.registerComponent = function (path, id) {
             ko.components.register(id, { viewModel: { require: path + "/" + id }, template: { require: 'text!' + path + "/" + id + '.html' } });
         };
+        /**
+         * Shows a pop-in
+         * @param viewId The view id (must have been registered with registerComponent)
+         * @param params The params for the popin
+         * @returns A promise with the choice of the user
+         */
         Application.prototype.showPopin = function (viewId, params) {
             var _this = this;
             if (params === void 0) { params = {}; }
@@ -73,6 +100,13 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
                 });
             }
         };
+        /**
+         * Shows a component without hidding already displayed components
+         * @param viewId The view id (see registerComponent)
+         * @param params The parameters for the page
+         * @param before If the page must be shown above the current pages
+         * @param main Not used (TODO ?)
+         */
         Application.prototype.showPage = function (viewId, params, before, main) {
             var _this = this;
             if (params === void 0) { params = {}; }
@@ -97,6 +131,9 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
                     _this.pages.push(view);
             });
         };
+        /**
+         * The entry point. Should be called when everything is ready.
+         */
         Application.prototype.start = function () {
             var _this = this;
             ko.applyBindings(this);
@@ -114,6 +151,6 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
         return Application;
     })();
     exports.Application = Application;
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = new Application();
+    exports.__esModule = true;
+    exports["default"] = new Application();
 });

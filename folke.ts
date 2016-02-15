@@ -29,6 +29,14 @@ export class Application {
     private defaultRoute: (parameters: Parameters<any>) => void = null;
     private defaultRoutePriority: number = 0;
     
+    /**
+     * Adds a route handler
+     * @param route The route. May contain {example} for mandatory parameters, :example: for optional parameters.
+     *              * is a wildcard to for "everything until the end".
+     * @param onRoute A function that will be called when the route is called. May also be a component id, in which
+     *                case this.goToView will be called for this component.
+     * @param priority The priority, used to create a default route (higher number is more priority).
+     */
     public addRoute(route: string, onRoute: ((parameters: Parameters<any>) => void)|string, priority: number = 0) {
         if (typeof onRoute === "string") {
             Crossroads.addRoute(route, (params: Parameters<any>) => {
@@ -50,6 +58,11 @@ export class Application {
         }
     }
 
+    /**
+     * Shows a component and hides all the components that are already displayed (including popins).
+     * @param viewId The component to show
+     * @param params The parameters for the component
+     */
     public goToView(viewId: string, params: Parameters<any>) {
         var views = this.pages();
 
@@ -70,10 +83,21 @@ export class Application {
         return ret;
     }
 
+    /**
+     * Registers a component with knockout that have a code and a template of the same name and in the same directory
+     * @param path The directory in which the component is
+     * @param id The id of the component. Must be the same as the names of the script and the HTML template files (minus the extension)
+     */
     public registerComponent(path: string, id: string) {
         ko.components.register(id, { viewModel: { require: path + "/" + id }, template: { require: 'text!' + path + "/" + id + '.html' } });
     }
     
+    /**
+     * Shows a pop-in
+     * @param viewId The view id (must have been registered with registerComponent)
+     * @param params The params for the popin
+     * @returns A promise with the choice of the user
+     */
     public showPopin<T>(viewId: string, params: Parameters<T> = {}) {
         if (params && params.resolve) {
             // If this is called from a popin that replaces another popin: keep the promise
@@ -88,10 +112,20 @@ export class Application {
         }
     }
     
-    public hidePopin = () => {
+    /**
+     * Hides the pop-in
+     */
+     public hidePopin = () => {
         this.popin(null);
     }
 
+    /**
+     * Shows a component without hidding already displayed components
+     * @param viewId The view id (see registerComponent)
+     * @param params The parameters for the page
+     * @param before If the page must be shown above the current pages
+     * @param main Not used (TODO ?)
+     */
     public showPage<T>(viewId: string, params: Parameters<T> = {}, before: boolean = false, main: boolean = false) {
         return new Promise<T>((resolve, reject) => {
             var serializedParams = JSON.stringify(params);
@@ -113,6 +147,9 @@ export class Application {
         });
     }
 
+    /**
+     * The entry point. Should be called when everything is ready.
+     */
     public start() {
         ko.applyBindings(this);
         if (this.defaultRoute) {

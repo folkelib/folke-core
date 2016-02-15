@@ -1,0 +1,51 @@
+﻿form {
+    fieldset {
+        border: none;
+        float: left;
+
+        &.large {
+            width: 100%;
+        }
+
+        &.pull-right {
+            float: right;
+        }
+
+        label {
+            display: block;
+
+            &.error {
+                color: @error-color;
+                &::before {
+                    .fa;
+                    content: @fa-var-exclamation-circle;
+                }
+            }
+        }
+
+        input[type="text"], input[type="password"] {
+            border: 1px solid @input-border-color;
+            width: 100%;
+            padding: 5px;
+            border-radius: @input-border-radius;
+        }
+
+    }
+
+    input[type="submit"], button[type="submit"] {
+        background-color: @button-submit-background;
+        color: @button-submit-color;
+    }
+}
+
+.button {
+    border-color: transparent;
+    border-radius: @input-border-radius;
+    text-transform: uppercase;
+    padding: 5px;
+
+    &.fit {
+        width: 100%;
+    }
+}
+
