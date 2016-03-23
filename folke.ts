@@ -6,7 +6,7 @@ import * as promise from "es6-promise";
 export class Page {
     closing: boolean;
     id: string;
-    /// The couple id,serializedParams uniquely idendify a page
+    /// The couple id,serializedParams uniquely identify a page
     serializedParams: string;
     params: Parameters<any>;
 }
@@ -23,6 +23,7 @@ export interface Parameters<T> {
 }
 
 export class Application {
+    // TODO see if it useful to have an array instead one only page
     private pages: KnockoutObservableArray<Page> = ko.observableArray<Page>();
     private popin = ko.observable<Popin>(null);
     

@@ -1,4 +1,5 @@
 define(["require", "exports", "knockout", "./folke"], function (require, exports, ko, Folke) {
+    "use strict";
     var ConfirmPopup = (function () {
         function ConfirmPopup(parameters) {
             var _this = this;
@@ -14,7 +15,7 @@ define(["require", "exports", "knockout", "./folke"], function (require, exports
             this.message = parameters['message'];
         }
         return ConfirmPopup;
-    })();
+    }());
     function register() {
         ko.components.register('popin-close-button', {
             template: '<button type="button" data-bind="click: close" class="close"><span class="fa fa-close"></span></button>',

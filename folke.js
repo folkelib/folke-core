@@ -1,13 +1,15 @@
 define(["require", "exports", "knockout", "crossroads", "hasher"], function (require, exports, ko, Crossroads, Hasher) {
+    "use strict";
     var Page = (function () {
         function Page() {
         }
         return Page;
-    })();
+    }());
     exports.Page = Page;
     var Application = (function () {
         function Application() {
             var _this = this;
+            // TODO see if it useful to have an array instead one only page
             this.pages = ko.observableArray();
             this.popin = ko.observable(null);
             this.defaultRoute = null;
@@ -56,8 +58,8 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
          */
         Application.prototype.goToView = function (viewId, params) {
             var views = this.pages();
-            for (var _i = 0; _i < views.length; _i++) {
-                var view = views[_i];
+            for (var _i = 0, views_1 = views; _i < views_1.length; _i++) {
+                var view = views_1[_i];
                 view.closing = true;
             }
             this.popin(null);
@@ -125,8 +127,8 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
                 params.reject = reject;
                 params.resolve = resolve;
                 var views = _this.pages();
-                for (var _i = 0; _i < views.length; _i++) {
-                    var view_1 = views[_i];
+                for (var _i = 0, views_2 = views; _i < views_2.length; _i++) {
+                    var view_1 = views_2[_i];
                     if (view_1.id == viewId && view_1.serializedParams == serializedParams) {
                         view_1.closing = false;
                         return;
@@ -157,7 +159,7 @@ define(["require", "exports", "knockout", "crossroads", "hasher"], function (req
             Hasher.init();
         };
         return Application;
-    })();
+    }());
     exports.Application = Application;
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = new Application();
