@@ -4,4 +4,8 @@ define(["require", "exports"], function (require, exports) {
         return value < 10 ? "0" + value : value;
     }
     exports.twoDigits = twoDigits;
+    function isObservable(o) {
+        return o.apply !== undefined;
+    }
+    exports.isObservable = isObservable;
 });
