@@ -1,7 +1,6 @@
 ﻿import * as ko from "knockout";
 import * as Crossroads from "crossroads";
 import * as Hasher from "hasher";
-import * as promise from "es6-promise";
 
 export class Page {
     closing: boolean;
@@ -18,7 +17,7 @@ export interface Popin {
 
 export interface Parameters<T> {
     [x: string]: any;
-    resolve?: (value?: T | promise.Thenable<T>) => void;
+    resolve?: (value?: T | Thenable<T>) => void;
     reject?: (error?: any) => void;
 }
 
@@ -105,7 +104,7 @@ export class Application {
             this.popin({ id: viewId, params: params });
             // TODO need to return something?
         } else {
-            return new promise.Promise<T>((resolve, reject) => {
+            return new Promise<T>((resolve, reject) => {
                 params.reject = reject;
                 params.resolve = resolve;
                 this.popin({ id: viewId, params: params });
@@ -137,7 +136,7 @@ export class Application {
      * @param main Not used (TODO ?)
      */
     public showPage<T>(viewId: string, params: Parameters<T> = {}, before: boolean = false, main: boolean = false) {
-        return new promise.Promise<T>((resolve, reject) => {
+        return new Promise<T>((resolve, reject) => {
             var serializedParams = JSON.stringify(params);
             params.reject = reject;
             params.resolve = resolve;

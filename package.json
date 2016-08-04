@@ -2,7 +2,7 @@
   "name": "folke-core",
   "version": "1.0.5",
   "description": "Folke Core framework for Single Page Applications",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "tsc -p ."
@@ -26,5 +26,6 @@
   "devDependencies": {
     "typescript": "1.8.10",
     "typings": "^1.3.2"
-  }
+  },
+  "typings": "dist/index.d.ts"
 }

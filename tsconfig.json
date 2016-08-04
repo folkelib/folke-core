@@ -4,11 +4,13 @@
         "target": "es5",
         "noImplicitAny": true,
         "sourceMap": false,
-        "outDir": "dist"
+        "outDir": "dist",
+        "declaration": true
     },
     "exclude": [
         "node_modules",
         "typings/globals",
-        "typings/modules"
+        "typings/modules",
+        "dist"
     ]
 }
