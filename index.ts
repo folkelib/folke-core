@@ -1,6 +1,7 @@
 ﻿import * as ko from "knockout";
 import * as Crossroads from "crossroads";
 import * as Hasher from "hasher";
+import * as promise from "es6-promise";
 
 export class Page {
     closing: boolean;
@@ -17,7 +18,7 @@ export interface Popin {
 
 export interface Parameters<T> {
     [x: string]: any;
-    resolve?: (value?: T | Thenable<T>) => void;
+    resolve?: (value?: T | promise.Thenable<T>) => void;
     reject?: (error?: any) => void;
 }
 
@@ -63,7 +64,7 @@ export class Application {
      * @param viewId The component to show
      * @param params The parameters for the component
      */
-    public goToView(viewId: string, params: Parameters<any>) {
+    public goToView(viewId: string, params: Parameters<any>): promise.Promise<any> {
         var views = this.pages();
 
         for (let view of views) {
@@ -98,13 +99,13 @@ export class Application {
      * @param params The params for the popin
      * @returns A promise with the choice of the user
      */
-    public showPopin<T>(viewId: string, params: Parameters<T> = {}) {
+    public showPopin<T>(viewId: string, params: Parameters<T> = {}): promise.Promise<T> {
         if (params && params.resolve) {
             // If this is called from a popin that replaces another popin: keep the promise
             this.popin({ id: viewId, params: params });
             // TODO need to return something?
         } else {
-            return new Promise<T>((resolve, reject) => {
+            return new promise.Promise<T>((resolve, reject) => {
                 params.reject = reject;
                 params.resolve = resolve;
                 this.popin({ id: viewId, params: params });
@@ -117,7 +118,7 @@ export class Application {
      * @param title The title
      * @param message The message
      */
-    public confirm(title: string, message: string) {
+    public confirm(title: string, message: string): promise.Promise<boolean> {
         return this.showPopin<boolean>('popin-confirm', { title: title, message: message });
     }
     
@@ -135,8 +136,8 @@ export class Application {
      * @param before If the page must be shown above the current pages
      * @param main Not used (TODO ?)
      */
-    public showPage<T>(viewId: string, params: Parameters<T> = {}, before: boolean = false, main: boolean = false) {
-        return new Promise<T>((resolve, reject) => {
+    public showPage<T>(viewId: string, params: Parameters<T> = {}, before: boolean = false, main: boolean = false): promise.Promise<T> {
+        return new promise.Promise<T>((resolve, reject) => {
             var serializedParams = JSON.stringify(params);
             params.reject = reject;
             params.resolve = resolve;
