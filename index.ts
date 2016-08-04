@@ -18,13 +18,13 @@ export interface Popin {
 
 export interface Parameters<T> {
     [x: string]: any;
-    resolve?: (value?: T | Thenable<T>) => void;
+    resolve?: (value?: T | promise.Thenable<T>) => void;
     reject?: (error?: any) => void;
 }
 
 export class Application {
     // TODO see if it useful to have an array instead one only page
-    private pages: KnockoutObservableArray<Page> = ko.observableArray<Page>();
+    private pages: ko.ObservableArray<Page> = ko.observableArray<Page>();
     private popin = ko.observable<Popin>(null);
     
     private defaultRoute: (parameters: Parameters<any>) => void = null;
@@ -105,7 +105,7 @@ export class Application {
             this.popin({ id: viewId, params: params });
             // TODO need to return something?
         } else {
-            return new Promise<T>((resolve, reject) => {
+            return new promise.Promise<T>((resolve, reject) => {
                 params.reject = reject;
                 params.resolve = resolve;
                 this.popin({ id: viewId, params: params });
@@ -137,7 +137,7 @@ export class Application {
      * @param main Not used (TODO ?)
      */
     public showPage<T>(viewId: string, params: Parameters<T> = {}, before: boolean = false, main: boolean = false) {
-        return new Promise<T>((resolve, reject) => {
+        return new promise.Promise<T>((resolve, reject) => {
             var serializedParams = JSON.stringify(params);
             params.reject = reject;
             params.resolve = resolve;
@@ -167,7 +167,7 @@ export class Application {
         }
 
         Crossroads.normalizeFn = Crossroads.NORM_AS_OBJECT;
-        function parseHash(newHash) {
+        function parseHash(newHash: string) {
             Crossroads.parse(newHash);
         }
         Hasher.initialized.add(parseHash);

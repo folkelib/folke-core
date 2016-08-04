@@ -1,5 +1,5 @@
 ﻿import * as ko from "knockout";
-import * as Folke from "./folke";
+import * as Folke from "./index";
 
 class ConfirmPopup {
     title: string;
