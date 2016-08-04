@@ -1,6 +1,6 @@
 {
   "name": "folke-core",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Folke Core framework for Single Page Applications",
   "main": "dist/index.js",
   "scripts": {
