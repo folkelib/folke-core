@@ -1,7 +1,6 @@
 ﻿import * as ko from "knockout";
 import * as Crossroads from "crossroads";
 import * as Hasher from "hasher";
-import * as promise from "es6-promise";
 
 export class Page {
     closing: boolean;
@@ -18,7 +17,7 @@ export interface Popin {
 
 export interface Parameters<T> {
     [x: string]: any;
-    resolve?: (value?: T | promise.Thenable<T>) => void;
+    resolve?: (value?: T | Thenable<T>) => void;
     reject?: (error?: any) => void;
 }
 
@@ -64,7 +63,7 @@ export class Application {
      * @param viewId The component to show
      * @param params The parameters for the component
      */
-    public goToView(viewId: string, params: Parameters<any>): promise.Promise<any> {
+    public goToView(viewId: string, params: Parameters<any>): Promise<any> {
         var views = this.pages();
 
         for (let view of views) {
@@ -83,15 +82,6 @@ export class Application {
         }
         return ret;
     }
-
-    /**
-     * Registers a component with knockout that have a code and a template of the same name and in the same directory
-     * @param path The directory in which the component is
-     * @param id The id of the component. Must be the same as the names of the script and the HTML template files (minus the extension)
-     */
-    public registerComponent(path: string, id: string) {
-        ko.components.register(id, { viewModel: { require: path + "/" + id }, template: { require: 'text!' + path + "/" + id + '.html' } });
-    }
     
     /**
      * Shows a pop-in
@@ -99,13 +89,13 @@ export class Application {
      * @param params The params for the popin
      * @returns A promise with the choice of the user
      */
-    public showPopin<T>(viewId: string, params: Parameters<T> = {}): promise.Promise<T> {
+    public showPopin<T>(viewId: string, params: Parameters<T> = {}): Promise<T> {
         if (params && params.resolve) {
             // If this is called from a popin that replaces another popin: keep the promise
             this.popin({ id: viewId, params: params });
             // TODO need to return something?
         } else {
-            return new promise.Promise<T>((resolve, reject) => {
+            return new Promise<T>((resolve, reject) => {
                 params.reject = reject;
                 params.resolve = resolve;
                 this.popin({ id: viewId, params: params });
@@ -118,7 +108,7 @@ export class Application {
      * @param title The title
      * @param message The message
      */
-    public confirm(title: string, message: string): promise.Promise<boolean> {
+    public confirm(title: string, message: string): Promise<boolean> {
         return this.showPopin<boolean>('popin-confirm', { title: title, message: message });
     }
     
@@ -136,8 +126,8 @@ export class Application {
      * @param before If the page must be shown above the current pages
      * @param main Not used (TODO ?)
      */
-    public showPage<T>(viewId: string, params: Parameters<T> = {}, before: boolean = false, main: boolean = false): promise.Promise<T> {
-        return new promise.Promise<T>((resolve, reject) => {
+    public showPage<T>(viewId: string, params: Parameters<T> = {}, before: boolean = false, main: boolean = false): Promise<T> {
+        return new Promise<T>((resolve, reject) => {
             var serializedParams = JSON.stringify(params);
             params.reject = reject;
             params.resolve = resolve;
@@ -161,18 +151,20 @@ export class Application {
      * The entry point. Should be called when everything is ready.
      */
     public start() {
-        ko.applyBindings(this);
-        if (this.defaultRoute) {
-            Crossroads.addRoute('', (params: Parameters<any>) => this.defaultRoute(params));
-        }
+        document.addEventListener("DOMContentLoaded", () => {
+            ko.applyBindings(this);
+            if (this.defaultRoute) {
+                Crossroads.addRoute('', (params: Parameters<any>) => this.defaultRoute(params));
+            }
 
-        Crossroads.normalizeFn = Crossroads.NORM_AS_OBJECT;
-        function parseHash(newHash: string) {
-            Crossroads.parse(newHash);
-        }
-        Hasher.initialized.add(parseHash);
-        Hasher.changed.add(parseHash);
-        Hasher.init();
+            Crossroads.normalizeFn = Crossroads.NORM_AS_OBJECT;
+            function parseHash(newHash: string) {
+                Crossroads.parse(newHash);
+            }
+            Hasher.initialized.add(parseHash);
+            Hasher.changed.add(parseHash);
+            Hasher.init();
+        });
     }
 }
 

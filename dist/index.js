@@ -2,7 +2,6 @@
 var ko = require("knockout");
 var Crossroads = require("crossroads");
 var Hasher = require("hasher");
-var promise = require("es6-promise");
 var Page = (function () {
     function Page() {
     }
@@ -77,14 +76,6 @@ var Application = (function () {
         return ret;
     };
     /**
-     * Registers a component with knockout that have a code and a template of the same name and in the same directory
-     * @param path The directory in which the component is
-     * @param id The id of the component. Must be the same as the names of the script and the HTML template files (minus the extension)
-     */
-    Application.prototype.registerComponent = function (path, id) {
-        ko.components.register(id, { viewModel: { require: path + "/" + id }, template: { require: 'text!' + path + "/" + id + '.html' } });
-    };
-    /**
      * Shows a pop-in
      * @param viewId The view id (must have been registered with registerComponent)
      * @param params The params for the popin
@@ -98,7 +89,7 @@ var Application = (function () {
             this.popin({ id: viewId, params: params });
         }
         else {
-            return new promise.Promise(function (resolve, reject) {
+            return new Promise(function (resolve, reject) {
                 params.reject = reject;
                 params.resolve = resolve;
                 _this.popin({ id: viewId, params: params });
@@ -125,7 +116,7 @@ var Application = (function () {
         if (params === void 0) { params = {}; }
         if (before === void 0) { before = false; }
         if (main === void 0) { main = false; }
-        return new promise.Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
             var serializedParams = JSON.stringify(params);
             params.reject = reject;
             params.resolve = resolve;
@@ -149,17 +140,19 @@ var Application = (function () {
      */
     Application.prototype.start = function () {
         var _this = this;
-        ko.applyBindings(this);
-        if (this.defaultRoute) {
-            Crossroads.addRoute('', function (params) { return _this.defaultRoute(params); });
-        }
-        Crossroads.normalizeFn = Crossroads.NORM_AS_OBJECT;
-        function parseHash(newHash) {
-            Crossroads.parse(newHash);
-        }
-        Hasher.initialized.add(parseHash);
-        Hasher.changed.add(parseHash);
-        Hasher.init();
+        document.addEventListener("DOMContentLoaded", function () {
+            ko.applyBindings(_this);
+            if (_this.defaultRoute) {
+                Crossroads.addRoute('', function (params) { return _this.defaultRoute(params); });
+            }
+            Crossroads.normalizeFn = Crossroads.NORM_AS_OBJECT;
+            function parseHash(newHash) {
+                Crossroads.parse(newHash);
+            }
+            Hasher.initialized.add(parseHash);
+            Hasher.changed.add(parseHash);
+            Hasher.init();
+        });
     };
     return Application;
 }());

@@ -1,4 +1,3 @@
-import * as promise from "es6-promise";
 export declare class Page {
     closing: boolean;
     id: string;
@@ -11,7 +10,7 @@ export interface Popin {
 }
 export interface Parameters<T> {
     [x: string]: any;
-    resolve?: (value?: T | promise.Thenable<T>) => void;
+    resolve?: (value?: T | Thenable<T>) => void;
     reject?: (error?: any) => void;
 }
 export declare class Application {
@@ -33,26 +32,20 @@ export declare class Application {
      * @param viewId The component to show
      * @param params The parameters for the component
      */
-    goToView(viewId: string, params: Parameters<any>): promise.Promise<any>;
-    /**
-     * Registers a component with knockout that have a code and a template of the same name and in the same directory
-     * @param path The directory in which the component is
-     * @param id The id of the component. Must be the same as the names of the script and the HTML template files (minus the extension)
-     */
-    registerComponent(path: string, id: string): void;
+    goToView(viewId: string, params: Parameters<any>): Promise<any>;
     /**
      * Shows a pop-in
      * @param viewId The view id (must have been registered with registerComponent)
      * @param params The params for the popin
      * @returns A promise with the choice of the user
      */
-    showPopin<T>(viewId: string, params?: Parameters<T>): promise.Promise<T>;
+    showPopin<T>(viewId: string, params?: Parameters<T>): Promise<T>;
     /**
      * Shows a confirm pop-in (with the 'popin-confirm' name)
      * @param title The title
      * @param message The message
      */
-    confirm(title: string, message: string): promise.Promise<boolean>;
+    confirm(title: string, message: string): Promise<boolean>;
     /**
      * Hides the pop-in
      */
@@ -64,7 +57,7 @@ export declare class Application {
      * @param before If the page must be shown above the current pages
      * @param main Not used (TODO ?)
      */
-    showPage<T>(viewId: string, params?: Parameters<T>, before?: boolean, main?: boolean): promise.Promise<T>;
+    showPage<T>(viewId: string, params?: Parameters<T>, before?: boolean, main?: boolean): Promise<T>;
     /**
      * The entry point. Should be called when everything is ready.
      */

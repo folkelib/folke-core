@@ -7,6 +7,7 @@
   "globalDependencies": {
     "crossroads": "registry:dt/crossroads#0.0.0+20160317120654",
     "hasher": "registry:dt/hasher#0.0.0+20160317120654",
-    "js-signals": "registry:dt/js-signals#0.0.0+20160316155526"
+    "js-signals": "registry:dt/js-signals#0.0.0+20160316155526",
+    "promise": "github:Sidoine/promise"
   }
 }
