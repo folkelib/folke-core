@@ -14,7 +14,7 @@ var Application = (function () {
         // TODO see if it useful to have an array instead one only page
         this.pages = ko.observableArray();
         this.popin = ko.observable(null);
-        this.defaultRoute = null;
+        this.defaultRoute = undefined;
         this.defaultRoutePriority = 0;
         /**
          * Hides the pop-in
@@ -35,7 +35,7 @@ var Application = (function () {
         var _this = this;
         if (priority === void 0) { priority = 0; }
         if (typeof onRoute === "string") {
-            Crossroads.addRoute(route, function (params) {
+            var newRoute = Crossroads.addRoute(route, function (params) {
                 _this.goToView(onRoute, params);
             });
             if (priority > this.defaultRoutePriority || this.defaultRoutePriority === 0) {
@@ -44,7 +44,7 @@ var Application = (function () {
             }
         }
         else {
-            Crossroads.addRoute(route, function (params) {
+            var newRoute = Crossroads.addRoute(route, function (params) {
                 onRoute(params);
             });
             if (priority > this.defaultRoutePriority || this.defaultRoutePriority === 0) {
@@ -85,8 +85,14 @@ var Application = (function () {
         var _this = this;
         if (params === void 0) { params = {}; }
         if (params && params.resolve) {
+            var previousResolve_1 = params.resolve;
+            var previousReject_1 = params.reject;
             // If this is called from a popin that replaces another popin: keep the promise
-            this.popin({ id: viewId, params: params });
+            return new Promise(function (resolve, reject) {
+                params.reject = function () { return (previousReject_1 && previousReject_1()) || reject(); };
+                params.resolve = function () { return previousResolve_1() && resolve(); };
+                _this.popin({ id: viewId, params: params });
+            });
         }
         else {
             return new Promise(function (resolve, reject) {
@@ -142,8 +148,8 @@ var Application = (function () {
         var _this = this;
         document.addEventListener("DOMContentLoaded", function () {
             ko.applyBindings(_this);
-            if (_this.defaultRoute) {
-                Crossroads.addRoute('', function (params) { return _this.defaultRoute(params); });
+            if (_this.defaultRoute != undefined) {
+                Crossroads.addRoute('', function (params) { return _this.defaultRoute && _this.defaultRoute(params); });
             }
             Crossroads.normalizeFn = Crossroads.NORM_AS_OBJECT;
             function parseHash(newHash) {

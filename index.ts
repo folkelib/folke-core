@@ -1,5 +1,5 @@
 ﻿import * as ko from "knockout";
-import * as Crossroads from "crossroads";
+import Crossroads = require("crossroads");
 import * as Hasher from "hasher";
 
 export class Page {
@@ -17,16 +17,16 @@ export interface Popin {
 
 export interface Parameters<T> {
     [x: string]: any;
-    resolve?: (value?: T | Thenable<T>) => void;
+    resolve?: (value?: T | PromiseLike<T>) => void;
     reject?: (error?: any) => void;
 }
 
 export class Application {
     // TODO see if it useful to have an array instead one only page
-    private pages: ko.ObservableArray<Page> = ko.observableArray<Page>();
+    private pages: KnockoutObservableArray<Page> = ko.observableArray<Page>();
     private popin = ko.observable<Popin>(null);
     
-    private defaultRoute: (parameters: Parameters<any>) => void = null;
+    private defaultRoute: ((parameters: Parameters<any>) => void) | undefined = undefined;
     private defaultRoutePriority: number = 0;
     
     /**
@@ -39,7 +39,7 @@ export class Application {
      */
     public addRoute(route: string, onRoute: ((parameters: Parameters<any>) => void)|string, priority: number = 0) {
         if (typeof onRoute === "string") {
-            Crossroads.addRoute(route, (params: Parameters<any>) => {
+            const newRoute = Crossroads.addRoute(route, (params: Parameters<any>) => {
                 this.goToView(onRoute, params);
             });
             if (priority > this.defaultRoutePriority || this.defaultRoutePriority === 0) {
@@ -47,7 +47,7 @@ export class Application {
                 this.defaultRoutePriority = priority || 0;
             }
         } else {
-            Crossroads.addRoute(route, (params: Parameters<any>) => {
+            const newRoute = Crossroads.addRoute(route, (params: Parameters<any>) => {
                 onRoute(params);
             });
 
@@ -89,11 +89,17 @@ export class Application {
      * @param params The params for the popin
      * @returns A promise with the choice of the user
      */
-    public showPopin<T>(viewId: string, params: Parameters<T> = {}): Promise<T> {
+    public showPopin<T>(viewId: string, params: Parameters<T> = {}): PromiseLike<T> {
         if (params && params.resolve) {
+            const previousResolve = params.resolve;
+            const previousReject = params.reject;
             // If this is called from a popin that replaces another popin: keep the promise
-            this.popin({ id: viewId, params: params });
-            // TODO need to return something?
+            return new Promise<T>((resolve, reject) => {
+                params.reject = () => (previousReject && previousReject()) || reject();
+                params.resolve = () => previousResolve() && resolve();
+                this.popin({ id: viewId, params: params });
+            
+            });
         } else {
             return new Promise<T>((resolve, reject) => {
                 params.reject = reject;
@@ -108,7 +114,7 @@ export class Application {
      * @param title The title
      * @param message The message
      */
-    public confirm(title: string, message: string): Promise<boolean> {
+    public confirm(title: string, message: string): PromiseLike<boolean> {
         return this.showPopin<boolean>('popin-confirm', { title: title, message: message });
     }
     
@@ -153,8 +159,8 @@ export class Application {
     public start() {
         document.addEventListener("DOMContentLoaded", () => {
             ko.applyBindings(this);
-            if (this.defaultRoute) {
-                Crossroads.addRoute('', (params: Parameters<any>) => this.defaultRoute(params));
+            if (this.defaultRoute != undefined) {
+                Crossroads.addRoute('', (params: Parameters<any>) => this.defaultRoute && this.defaultRoute(params));
             }
 
             Crossroads.normalizeFn = Crossroads.NORM_AS_OBJECT;

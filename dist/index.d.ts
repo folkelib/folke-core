@@ -10,7 +10,7 @@ export interface Popin {
 }
 export interface Parameters<T> {
     [x: string]: any;
-    resolve?: (value?: T | Thenable<T>) => void;
+    resolve?: (value?: T | PromiseLike<T>) => void;
     reject?: (error?: any) => void;
 }
 export declare class Application {
@@ -39,13 +39,13 @@ export declare class Application {
      * @param params The params for the popin
      * @returns A promise with the choice of the user
      */
-    showPopin<T>(viewId: string, params?: Parameters<T>): Promise<T>;
+    showPopin<T>(viewId: string, params?: Parameters<T>): PromiseLike<T>;
     /**
      * Shows a confirm pop-in (with the 'popin-confirm' name)
      * @param title The title
      * @param message The message
      */
-    confirm(title: string, message: string): Promise<boolean>;
+    confirm(title: string, message: string): PromiseLike<boolean>;
     /**
      * Hides the pop-in
      */
