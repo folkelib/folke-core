@@ -8,26 +8,15 @@ export class Page<T> {
     closing: boolean;
     /// The couple id,serializedParams uniquely identify a page
     serializedParams: string;
-    params: Parameters<T>;
+    params: T;
     element: JSX.Element;
-}
-
-export interface Popin {
-    id: string;
-    params: Parameters<any>;
-}
-
-export interface Parameters<T> {
-    [x: string]: any;
-    // resolve?: (value?: T | PromiseLike<T>) => void;
-    // reject?: (error?: any) => void;
 }
 
 export type PageFactory = (props: any) => JSX.Element;
 
 export interface Route<T> {
     route: string;
-    onRoute: (parameter: Parameters<T>) => HTMLElement | Promise<HTMLElement>;
+    onRoute: (parameter: T) => HTMLElement | Promise<HTMLElement>;
 }
 
 function isPromise<T>(a: any) : a is Promise<T> {
@@ -55,7 +44,7 @@ export class Application {
     //  * @param priority The priority, used to create a default route (higher number is more priority).
     //  */
     public addRoute<T>(route: Route<T>) {
-        Crossroads.addRoute(route.route, (params: Parameters<T>) => {
+        Crossroads.addRoute(route.route, (params: T) => {
            this.goToView(route, params);
         });
     }
@@ -85,7 +74,7 @@ export class Application {
     //  * @param viewId The component to show
     //  * @param params The parameters for the component
     //  */
-    public async goToView<T>(route: Route<T>, params: Parameters<T>) {
+    public async goToView<T>(route: Route<T>, params: T) {
         this.pages.splice(0);
         const ret = route.onRoute(params);
         if (isPromise(ret)) {

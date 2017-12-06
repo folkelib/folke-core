@@ -3,27 +3,20 @@ export declare class Page<T> {
     id: string;
     closing: boolean;
     serializedParams: string;
-    params: Parameters<T>;
+    params: T;
     element: JSX.Element;
-}
-export interface Popin {
-    id: string;
-    params: Parameters<any>;
-}
-export interface Parameters<T> {
-    [x: string]: any;
 }
 export declare type PageFactory = (props: any) => JSX.Element;
 export interface Route<T> {
     route: string;
-    onRoute: (parameter: Parameters<T>) => HTMLElement | Promise<HTMLElement>;
+    onRoute: (parameter: T) => HTMLElement | Promise<HTMLElement>;
 }
 export declare class Application {
     popin: KnockoutObservable<HTMLElement>;
     pages: KnockoutObservableArray<HTMLElement>;
     routes: Route<any>[];
     addRoute<T>(route: Route<T>): void;
-    goToView<T>(route: Route<T>, params: Parameters<T>): Promise<void>;
+    goToView<T>(route: Route<T>, params: T): Promise<void>;
     /**
      * Shows a pop-in
      * @param view The view
